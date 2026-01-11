@@ -1,0 +1,12 @@
+Functional Requirements
+    1. There should be 2 players each switch, taking turns
+    2. Prevent illegal moves, player cannot select a cell that is already selected
+    3. Detect when a player gets 3 marks lined up they win
+    4. Detect a draw when the board is full
+    5. Players can choose which cell to select
+
+Non-functional Requirements
+    1. First to 3 wins
+    2. Players can log their names
+    3. Track each players wins and display at the top
+
