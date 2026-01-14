@@ -12,7 +12,7 @@ function GameBoard() {
 
     const illegalMove = (row, column) => {
         //Prevents a player from selecting an aready selected cell
-        availableCell = board[row][column];
+        const availableCell = board[row][column];
         if (availableCell.getCell() !== 0) {
             console.log("That cell is not available");
             return true;
@@ -21,8 +21,8 @@ function GameBoard() {
     }
 
     const full = () => {
-        flat = board.flat();
-        availableCells = flat.filter(index => index.getCell() === 0);
+        const flat = board.flat();
+        const availableCells = flat.filter(index => index.getCell() === 0);
 
         if (!availableCells.length) {
             console.log("full");
@@ -32,10 +32,13 @@ function GameBoard() {
     }
 
     const selectCell = (row, column, player) => {
-        //const full = board.map(row => map.filter())
-
         //find the cell at row and column, then change it to the players token
-        return availableCell.markCell(player.token);
+        return board[row][column].markCell(player.token);
+    }
+
+    const getBoard = () => {
+        const currentBoard = board.map((row) => row.map(cells => cells.getCell()));
+        return currentBoard;
     }
 
     const printBoard = () => {
@@ -43,7 +46,7 @@ function GameBoard() {
         console.log(currentBoard);
     }
 
-    return {full, illegalMove, selectCell, printBoard}
+    return {full, illegalMove, selectCell, getBoard, printBoard}
 }
 
 //Used to mark each cell in TicTacToe with the respective players token
@@ -68,10 +71,10 @@ function CreatePlayer(name, token) {
 }
 
 function GameController() {
-    player1 = CreatePlayer("p1", "X");
-    player2 = CreatePlayer("p2", "O");
+    const player1 = CreatePlayer("p1", "X");
+    const player2 = CreatePlayer("p2", "O");
 
-    currentPlayer = player1;
+    let currentPlayer = player1;
 
     const switchPlayer = () => {
         console.log(currentPlayer.name + " turn");
@@ -79,9 +82,13 @@ function GameController() {
     }
 
     const board = GameBoard();
+
+    //A snapshot of the live board, so that the UI can be implemented
+    const currentBoard = () => board.getBoard();
+
     const select = (row, column) => {
         //When a player makes an illegal move, it won't skip their turn
-        illegalMove = board.illegalMove(row, column);
+        const illegalMove = board.illegalMove(row, column);
 
         if (!illegalMove) {
             board.selectCell(row, column, currentPlayer);
@@ -91,10 +98,31 @@ function GameController() {
         board.full();
     }
 
-    return {select, switchPlayer}
+    return {currentBoard, select}
 }
 
+function UserInterface() {
+    const initializeBoard = () => {
+        const ROW = 3;
+        const COLUMN = 3;
+
+        const board = document.querySelector(".board");
+        for (let i = 0; i < ROW; i++) {
+            for (let j = 0; j < COLUMN; j++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                board.appendChild(cell);
+            }
+        }
+    }
+    return {initializeBoard}
+}
+
+const UI = UserInterface();
+UI.initializeBoard();
+
 const game = GameController();
+
 game.select(0, 0);
 game.select(0, 1);
 game.select(0, 2);
@@ -106,3 +134,6 @@ game.select(1, 2);
 game.select(2, 0);
 game.select(2, 1);
 game.select(2, 2);
+
+const ui = UserInterface();
+console.log("here");
