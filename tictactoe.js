@@ -86,54 +86,67 @@ function GameController() {
     //A snapshot of the live board, so that the UI can be implemented
     const currentBoard = () => board.getBoard();
 
+    //Returns the players token after they make a movem so it can be displayed onto DOM
     const select = (row, column) => {
         //When a player makes an illegal move, it won't skip their turn
         const illegalMove = board.illegalMove(row, column);
 
         if (!illegalMove) {
             board.selectCell(row, column, currentPlayer);
+            previousPlayer = currentPlayer;
             currentPlayer = switchPlayer(); 
         }
         board.printBoard();
         board.full();
+        return previousPlayer.token;
     }
 
     return {currentBoard, select}
 }
 
 function UserInterface() {
+    const board = document.querySelector(".board");
+
     const initializeBoard = () => {
         const ROW = 3;
         const COLUMN = 3;
+        let idNum = 0;
 
-        const board = document.querySelector(".board");
         for (let i = 0; i < ROW; i++) {
             for (let j = 0; j < COLUMN; j++) {
                 const cell = document.createElement("div");
                 cell.classList.add("cell");
+                cell.id = idNum++;
                 board.appendChild(cell);
             }
         }
     }
-    return {initializeBoard}
+
+    const clickCell = () => {
+        board.addEventListener("click", (event) => {
+            const cell = event.target;
+            if (!cell.classList.contains("cell")) return;
+
+            const id = Number(cell.id);
+            const row = Math.floor(id / 3);
+            const col = id % 3;
+
+            const token = game.select(row, col); // should return "X" or "O" (or null/false if invalid)
+            if (!token) return;
+
+            cell.textContent = token; // updates screen immediately
+            });
+    }
+
+    return {initializeBoard, clickCell}
 }
 
 const UI = UserInterface();
 UI.initializeBoard();
+UI.clickCell();
 
 const game = GameController();
 
-game.select(0, 0);
-game.select(0, 1);
-game.select(0, 2);
-
-game.select(1, 0);
-game.select(1, 1);
-game.select(1, 2);
-
-game.select(2, 0);
-game.select(2, 1);
-game.select(2, 2);
-
+const first = game.select(0, 0);
 const ui = UserInterface();
 console.log("here");

@@ -10,3 +10,14 @@ Non-functional Requirements
     2. Players can log their names
     3. Track each players wins and display at the top
 
+Mapping id to cell
+[0][1][2]
+[3][4][5]
+[6][7][8]
+
+[0][0] [0][1] [0][2]
+[1][0] [1][1] [1][2]
+[2][0] [2][1] [2][2]
+
+row = id / 3
+col = id % 3
